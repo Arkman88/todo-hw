@@ -1,6 +1,7 @@
 import React from "react";
 import TaskList from '../task-list/task-list'
 import Footer from '../footer/footer'
+import './main.css'
 
 const Main = () => {
 
@@ -15,13 +16,13 @@ const Main = () => {
             id: 2},
         {description: 'Active task', 
             created: 'created 5 minutes ago', 
-            classNameInfo: 'active',
+            classNameInfo: '',
             id: 3}
     ]
 
     return (
         <section className="main">
-            <TaskList todos={todoData}/>
+            <TaskList tasks={todoData}/>
             <Footer />
         </section>
     )
