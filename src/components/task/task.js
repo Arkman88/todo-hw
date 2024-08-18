@@ -3,22 +3,11 @@ import './task.css'
 import { formatDistanceToNow} from 'date-fns';
 
 export default class Task extends React.Component {
-    
-    state = {
-        done: false
-    }
-
-    onLabelClick = () => {
-        this.setState(({done}) =>{
-            return {
-                done: !done
-            }
-        })
-    }
 
     render() {
-        const { description, created, onDeleted } = this.props;
-        const {done} = this.state;
+        const { description, 
+            created, onDeleted, 
+            onToggleDone, done } = this.props;
         const timeAgo = formatDistanceToNow(new Date(created), {addSuffix: true})
         let classNames = 'description';
         if (done) {classNames += ' completed'};
@@ -28,11 +17,11 @@ export default class Task extends React.Component {
                 <input className="toggle" 
                 checked={done}
                 type="checkbox"
-                onChange={this.onLabelClick}>
+                onChange={onToggleDone}>
                 </input>
                 <label>
                     <span className={classNames}
-                        onClick={ this.onLabelClick}>
+                        onClick={ onToggleDone}>
                         { description } 
                     </span>
                     <span className="created">{ timeAgo }</span>

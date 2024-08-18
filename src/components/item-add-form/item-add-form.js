@@ -12,7 +12,7 @@ export default class AddForm extends React.Component {
         })
     }
 
-    keyPress = (e) => {
+    onKeyPress = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
             const {text} = this.state;
@@ -25,13 +25,14 @@ export default class AddForm extends React.Component {
 
     render () {
         return (
-            <input className="new-todo" 
-                placeholder="What needs to be done?" 
+            <input 
+                className="new-todo" 
+                placeholder="Добавьте сюда задачу" 
                 autoFocus
                 value={this.state.text}
                 onChange={this.inputChange}
-                onKeyDown={this.keyPress}>
-            </input>
+                onKeyDown={this.onKeyPress} 
+            />
         )
     }
 }
