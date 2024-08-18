@@ -1,14 +1,12 @@
 import React from "react";
+import AddForm from "../item-add-form/item-add-form";
 import './header.css'
 
-const Header = () => {
+const Header = ({onAdd}) => {
     return (
         <header className="header">
-            <h1>ToDos</h1>
-            <input className="new-todo" 
-                placeholder="What needs to be done?" 
-                autoFocus>
-            </input>
+            <h1>Todos</h1>
+            <AddForm  onAdd={onAdd}/>
         </header>
     )
 }

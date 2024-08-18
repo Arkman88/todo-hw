@@ -81,11 +81,10 @@
 	line-height: 1.2;
 	transition: color 0.4s;
 	font-weight: 400;
-	color: #4d4d4d;
 }
 
-.todo-list li.completed label .description {
-	color: #cdcdcd;
+.completed {
+	color: #929292c4;
 	text-decoration: line-through;
 }
 
