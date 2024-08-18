@@ -6,7 +6,7 @@
 
 .todo-list li {
 	position: relative;
-	font-size: 24px;
+	font-size: 20px;
 	border-bottom: 1px solid #ededed;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .todo-list li label .created {
-	font-size: 13px;
+	font-size: 12px;
 	color: gray;
 }
 
@@ -123,7 +123,7 @@
 }
 
 .todo-list li .edit {
-	display: none;
+	font-size: 20px;
 }
 
 .todo-list li.editing:last-child {
