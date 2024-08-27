@@ -5,7 +5,10 @@
   },
   "ignorePatterns": ["node_modules", "dist", "build"],
   "extends": [
+    "airbnb",
     "eslint:recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
     "plugin:react/recommended",
     "plugin:prettier/recommended",
     "plugin:import/errors",
@@ -32,7 +35,14 @@
     "import/order": [
       2,
       {
-        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
         "newlines-between": "always"
       }
     ]

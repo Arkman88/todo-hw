@@ -1,7 +1,7 @@
-import React from 'react';
-import Task from '../task/task';
-import './task-list.css';
-import PropTypes from 'prop-types';
+import React from 'react'
+import Task from '../task/task'
+import './task-list.css'
+import PropTypes from 'prop-types'
 
 const TaskList = ({ tasks, onDeleted, onToggleDone, onEditItem }) => {
   const elements = tasks.map((task) => (
@@ -16,17 +16,17 @@ const TaskList = ({ tasks, onDeleted, onToggleDone, onEditItem }) => {
         onEditItem={onEditItem}
       />
     </li>
-  ));
+  ))
 
-  return <ul className="todo-list">{elements}</ul>;
-};
+  return <ul className="todo-list">{elements}</ul>
+}
 
 TaskList.defaultProps = {
   tasks: [],
   onDeleted: () => {},
   onToggleDone: () => {},
   onEditItem: () => {},
-};
+}
 
 TaskList.propTypes = {
   tasks: PropTypes.arrayOf(
@@ -40,6 +40,6 @@ TaskList.propTypes = {
   onDeleted: PropTypes.func,
   onToggleDone: PropTypes.func,
   onEditItem: PropTypes.func,
-};
+}
 
-export default TaskList;
+export default TaskList

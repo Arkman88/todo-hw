@@ -1,7 +1,7 @@
-import React from 'react';
-import TasksFilter from '../tasks-filter/tasks-filter';
-import './footer.css';
-import PropTypes from 'prop-types';
+import React from 'react'
+import TasksFilter from '../tasks-filter/tasks-filter'
+import './footer.css'
+import PropTypes from 'prop-types'
 
 const Footer = ({ all, left, filter, onFilterChange, clearCompleted }) => {
   return (
@@ -14,8 +14,8 @@ const Footer = ({ all, left, filter, onFilterChange, clearCompleted }) => {
         Clear completed
       </button>
     </footer>
-  );
-};
+  )
+}
 
 Footer.defaultProps = {
   all: 0,
@@ -23,7 +23,7 @@ Footer.defaultProps = {
   filter: 'all',
   onFilterChange: () => {},
   clearCompleted: () => {},
-};
+}
 
 Footer.propTypes = {
   all: PropTypes.number,
@@ -31,6 +31,6 @@ Footer.propTypes = {
   filter: PropTypes.string,
   onFilterChange: PropTypes.func,
   clearCompleted: PropTypes.func,
-};
+}
 
-export default Footer;
+export default Footer

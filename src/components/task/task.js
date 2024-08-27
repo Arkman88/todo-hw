@@ -1,7 +1,7 @@
-import React from 'react';
-import './task.css';
-import { formatDistanceToNowStrict } from 'date-fns';
-import PropTypes from 'prop-types';
+import React from 'react'
+import './task.css'
+import { formatDistanceToNowStrict } from 'date-fns'
+import PropTypes from 'prop-types'
 
 export default class Task extends React.Component {
   state = {
@@ -9,42 +9,42 @@ export default class Task extends React.Component {
     editText: this.props.description,
     errorMessage: '',
     showError: false,
-  };
+  }
 
   onEditClick = () => {
-    this.setState({ isEditing: true, errorMessage: '', showError: false });
-  };
+    this.setState({ isEditing: true, errorMessage: '', showError: false })
+  }
 
   onTextChange = (e) => {
-    this.setState({ editText: e.target.value, errorMessage: '', showError: false });
-  };
+    this.setState({ editText: e.target.value, errorMessage: '', showError: false })
+  }
 
   onSave = () => {
-    const trimmedText = this.state.editText.trim();
+    const trimmedText = this.state.editText.trim()
 
     if (trimmedText.length > 0) {
-      this.props.onEditItem(this.props.id, trimmedText);
-      this.setState({ isEditing: false, errorMessage: '', showError: false });
+      this.props.onEditItem(this.props.id, trimmedText)
+      this.setState({ isEditing: false, errorMessage: '', showError: false })
     } else {
-      this.setState({ errorMessage: 'The task cannot be empty!', showError: true });
+      this.setState({ errorMessage: 'The task cannot be empty!', showError: true })
     }
-  };
+  }
 
   onKeyPress = (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault();
-      this.onSave();
+      e.preventDefault()
+      this.onSave()
     }
-  };
+  }
 
   render() {
-    const { created, onDeleted, onToggleDone, done } = this.props;
-    const { isEditing, editText, errorMessage, showError } = this.state;
-    const timeAgo = formatDistanceToNowStrict(new Date(created), { addSuffix: true });
-    let classNames = 'description';
+    const { created, onDeleted, onToggleDone, done } = this.props
+    const { isEditing, editText, errorMessage, showError } = this.state
+    const timeAgo = formatDistanceToNowStrict(new Date(created), { addSuffix: true })
+    let classNames = 'description'
 
     if (done) {
-      classNames += ' completed';
+      classNames += ' completed'
     }
 
     return (
@@ -78,7 +78,7 @@ export default class Task extends React.Component {
           </>
         )}
       </div>
-    );
+    )
   }
 }
 
@@ -89,7 +89,7 @@ Task.defaultProps = {
   onEditItem: () => {},
   onDeleted: () => {},
   onToggleDone: () => {},
-};
+}
 
 Task.propTypes = {
   done: PropTypes.bool,
@@ -99,4 +99,4 @@ Task.propTypes = {
   onDeleted: PropTypes.func,
   onToggleDone: PropTypes.func,
   id: PropTypes.number.isRequired,
-};
+}
