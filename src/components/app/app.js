@@ -1,4 +1,5 @@
 import React from 'react'
+
 import Header from '../header/header'
 import TaskList from '../task-list/task-list'
 import Footer from '../footer/footer'
@@ -10,7 +11,7 @@ export default class App extends React.Component {
     filter: 'all',
   }
 
-  createTodoItem(description) {
+  static createTodoItem(description) {
     return {
       description,
       created: Date.now(),
@@ -20,7 +21,7 @@ export default class App extends React.Component {
   }
 
   addItem = (text) => {
-    const newTask = this.createTodoItem(text)
+    const newTask = App.createTodoItem(text)
     this.setState(({ todoData }) => ({
       todoData: [...todoData, newTask],
     }))

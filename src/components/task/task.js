@@ -58,14 +58,13 @@ export default class Task extends React.Component {
               value={editText}
               onChange={this.onTextChange}
               onKeyDown={this.onKeyPress}
-              autoFocus
               size={editText.length}
             />
             {errorMessage && <span className={`error-message ${showError ? 'show' : ''}`}>{errorMessage}</span>}
           </div>
         ) : (
           <label>
-            <span className={classNames} onClick={onToggleDone}>
+            <span className={classNames} onClick={onToggleDone} onKeyDown={this.onKeyPress}>
               {editText}
             </span>
             <span className="created">{timeAgo}</span>
@@ -73,8 +72,8 @@ export default class Task extends React.Component {
         )}
         {!isEditing && (
           <>
-            <button className="icon icon-edit" onClick={this.onEditClick} />
-            <button className="icon icon-destroy" onClick={onDeleted} />
+            <button type="button" className="icon icon-edit" onClick={this.onEditClick} />
+            <button type="button" className="icon icon-destroy" onClick={onDeleted} />
           </>
         )}
       </div>

@@ -5,14 +5,15 @@
   },
   "ignorePatterns": ["node_modules", "dist", "build"],
   "extends": [
-    "airbnb",
-    "eslint:recommended",
+    "airbnb-base/legacy",
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended",
     "plugin:react/recommended",
     "plugin:prettier/recommended",
     "plugin:import/errors",
-    "plugin:import/warnings"
+    "plugin:import/warnings",
+    "react-app",
+    "react-app/jest"
   ],
   "parserOptions": {
     "ecmaFeatures": {

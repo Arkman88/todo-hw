@@ -29,7 +29,6 @@ export default class AddForm extends React.Component {
       <input
         className="new-todo"
         placeholder="Добавьте сюда задачу"
-        autoFocus
         value={this.state.text}
         onChange={this.inputChange}
         onKeyDown={this.onKeyPress}

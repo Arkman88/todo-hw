@@ -1,9 +1,10 @@
 import React from 'react'
-import Task from '../task/task'
-import './task-list.css'
 import PropTypes from 'prop-types'
 
-const TaskList = ({ tasks, onDeleted, onToggleDone, onEditItem }) => {
+import Task from '../task/task'
+import './task-list.css'
+
+function TaskList({ tasks, onDeleted, onToggleDone, onEditItem }) {
   const elements = tasks.map((task) => (
     <li key={task.id}>
       <Task

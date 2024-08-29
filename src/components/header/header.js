@@ -1,9 +1,10 @@
 import React from 'react'
-import AddForm from '../item-add-form/item-add-form'
-import './header.css'
 import PropTypes from 'prop-types'
 
-const Header = ({ onAdd }) => {
+import AddForm from '../item-add-form/item-add-form'
+import './header.css'
+
+function Header({ onAdd }) {
   return (
     <header className="header">
       <h1>Todos</h1>

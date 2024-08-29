@@ -2,7 +2,7 @@ import React from 'react'
 import './tasks-filter.css'
 import PropTypes from 'prop-types'
 
-const TasksFilter = ({ filter, onFilterChange }) => {
+function TasksFilter({ filter, onFilterChange }) {
   const filters = {
     all: 'All',
     active: 'Active',
@@ -13,7 +13,7 @@ const TasksFilter = ({ filter, onFilterChange }) => {
     <ul className="filters">
       {Object.keys(filters).map((key) => (
         <li key={key}>
-          <button className={filter === key ? 'selected' : ''} onClick={() => onFilterChange(key)}>
+          <button type="button" className={filter === key ? 'selected' : ''} onClick={() => onFilterChange(key)}>
             {filters[key]}
           </button>
         </li>

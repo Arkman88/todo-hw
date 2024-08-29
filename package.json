@@ -8,7 +8,6 @@
     "@testing-library/user-event": "^14.5.2",
     "babel-eslint": "^10.1.0",
     "date-fns": "^3.6.0",
-    "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.3",
     "lint-staged": "^13.0.3",
     "prop-types": "^15.8.1",
@@ -33,14 +32,9 @@
     }
   },
   "lint-staged": {
-    "*.ts": "npx tsc --noEmit",
-    "*.{js,jsx,ts,tsx}": "npx eslint",
-    "*.{js,jsx,ts,tsx,html,css}": "npx prettier --check"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
     ]
   },
   "browserslist": {
@@ -63,6 +57,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.9.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "globals": "^15.9.0",
