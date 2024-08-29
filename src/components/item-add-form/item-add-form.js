@@ -14,11 +14,12 @@ export default class AddForm extends React.Component {
   }
 
   onKeyPress = (e) => {
+    const { onAdd } = this.props
     if (e.key === 'Enter') {
       e.preventDefault()
       const { text } = this.state
       if (text.trim()) {
-        this.props.onAdd(text)
+        onAdd(text)
         this.setState({ text: '' })
       }
     }

@@ -6,11 +6,6 @@ import Footer from '../footer/footer'
 import './app.css'
 
 export default class App extends React.Component {
-  state = {
-    todoData: [],
-    filter: 'all',
-  }
-
   static createTodoItem(description) {
     return {
       description,
@@ -20,18 +15,15 @@ export default class App extends React.Component {
     }
   }
 
-  addItem = (text) => {
-    const newTask = App.createTodoItem(text)
-    this.setState(({ todoData }) => ({
-      todoData: [...todoData, newTask],
-    }))
+  filterTasks = {
+    all: (tasks) => tasks,
+    active: (tasks) => tasks.filter((task) => !task.done),
+    completed: (tasks) => tasks.filter((task) => task.done),
   }
 
-  deleteItem = (id) => {
-    this.setState(({ todoData }) => {
-      const newArr = todoData.filter((el) => el.id !== id)
-      return { todoData: newArr }
-    })
+  state = {
+    todoData: [],
+    filter: 'all',
   }
 
   onToggleDone = (id) => {
@@ -49,10 +41,18 @@ export default class App extends React.Component {
     this.setState({ filter })
   }
 
-  filterTasks = {
-    all: (tasks) => tasks,
-    active: (tasks) => tasks.filter((task) => !task.done),
-    completed: (tasks) => tasks.filter((task) => task.done),
+  deleteItem = (id) => {
+    this.setState(({ todoData }) => {
+      const newArr = todoData.filter((el) => el.id !== id)
+      return { todoData: newArr }
+    })
+  }
+
+  addItem = (text) => {
+    const newTask = App.createTodoItem(text)
+    this.setState(({ todoData }) => ({
+      todoData: [...todoData, newTask],
+    }))
   }
 
   clearCompleted = () => {

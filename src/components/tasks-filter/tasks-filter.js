@@ -1,4 +1,3 @@
-import React from 'react'
 import './tasks-filter.css'
 import PropTypes from 'prop-types'
 
