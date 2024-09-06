@@ -23,6 +23,7 @@ export default [
       },
     },
     settings: { react: { version: '18.3' } },
+    extends: ['airbnb', 'airbnb/hooks', 'plugin:react/jsx-runtime', 'prettier'],
     plugins: {
       'react-hooks': reactHooks,
       'react': react,
