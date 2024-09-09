@@ -12,7 +12,12 @@ export default class Task extends React.Component {
   }
 
   onEditClick = () => {
-    this.setState({ isEditing: true, errorMessage: '', showError: false })
+    this.setState({
+      isEditing: true,
+      errorMessage: '',
+      showError: false,
+      editText: this.props.description,
+    })
   }
 
   onTextChange = (e) => {
@@ -37,18 +42,28 @@ export default class Task extends React.Component {
     }
   }
 
+  handleStart = () => {
+    this.props.onStartTimer(this.props.id)
+  }
+
+  handlePause = () => {
+    this.props.onPauseTimer(this.props.id)
+  }
+
   render() {
-    const { created, onDeleted, onToggleDone, done } = this.props
+    const { created, onDeleted, onToggleDone, done, timer } = this.props
+
     const { isEditing, editText, errorMessage, showError } = this.state
     const timeAgo = formatDistanceToNowStrict(new Date(created), { addSuffix: true })
-    let classNames = 'description'
 
-    if (done) {
-      classNames += ' completed'
-    }
+    const timeRemaining = timer?.time || 0
+    const timeDisplay = `${Math.floor(timeRemaining / 60)}m ${timeRemaining % 60}s`
+
+    let classNames = done ? 'completed' : ''
+    classNames += isEditing ? ' editing' : ''
 
     return (
-      <div className="view">
+      <div className={classNames}>
         <input className="toggle" checked={done} type="checkbox" onChange={onToggleDone} />
         {isEditing ? (
           <div>
@@ -64,8 +79,13 @@ export default class Task extends React.Component {
           </div>
         ) : (
           <label>
-            <span className={classNames} onClick={onToggleDone} onKeyDown={this.onKeyPress}>
+            <span className="title" onClick={onToggleDone} onKeyDown={this.onKeyPress}>
               {editText}
+            </span>
+            <span className="description">
+              <button className="icon icon-play" onClick={this.handleStart} />
+              <button className="icon icon-pause" onClick={this.handlePause} />
+              <span className="timer-time">{timeDisplay}</span>
             </span>
             <span className="created">{timeAgo}</span>
           </label>
@@ -85,6 +105,7 @@ Task.defaultProps = {
   done: false,
   description: '',
   created: Date.now(),
+  timer: 0,
   onEditItem: () => {},
   onDeleted: () => {},
   onToggleDone: () => {},
@@ -93,7 +114,8 @@ Task.defaultProps = {
 Task.propTypes = {
   done: PropTypes.bool,
   description: PropTypes.string,
-  created: PropTypes.number,
+  created: PropTypes.string.isRequired,
+  time: PropTypes.number,
   onEditItem: PropTypes.func,
   onDeleted: PropTypes.func,
   onToggleDone: PropTypes.func,
