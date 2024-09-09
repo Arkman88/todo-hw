@@ -1,5 +1,4 @@
 import React from 'react'
-
 import Header from '../header/header'
 import TaskList from '../task-list/task-list'
 import Footer from '../footer/footer'
@@ -29,6 +28,25 @@ export default class App extends React.Component {
     timers: {},
   }
 
+  componentDidMount() {
+    const savedState = localStorage.getItem('appState')
+    if (savedState) {
+      this.setState(JSON.parse(savedState))
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.todoData !== this.state.todoData || prevState.filter !== this.state.filter) {
+      localStorage.setItem('appState', JSON.stringify(this.state))
+    }
+  }
+
+  componentWillUnmount() {
+    Object.values(this.state.timers).forEach(({ timerId }) => {
+      if (timerId) clearInterval(timerId)
+    })
+  }
+
   onToggleDone = (id) => {
     this.setState(({ todoData, timers }) => {
       const idx = todoData.findIndex((el) => el.id === id)
@@ -40,10 +58,12 @@ export default class App extends React.Component {
 
         const newTimers = { ...timers }
         delete newTimers[id]
-        return { todoData: [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)], timers: newTimers }
+        return {
+          todoData: [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)],
+          timers: newTimers,
+        }
       }
-      const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)]
-      return { todoData: newArr }
+      return { todoData: [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)] }
     })
   }
 
@@ -55,9 +75,7 @@ export default class App extends React.Component {
     this.setState(({ todoData, timers }) => {
       const newArr = todoData.filter((el) => el.id !== id)
 
-      if (timers[id]?.timerId) {
-        clearInterval(timers[id].timerId)
-      }
+      if (timers[id]?.timerId) clearInterval(timers[id].timerId)
 
       return {
         todoData: newArr,
