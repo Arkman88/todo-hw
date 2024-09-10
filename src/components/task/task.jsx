@@ -35,10 +35,16 @@ export default class Task extends React.Component {
     }
   }
 
+  onCancelEdit = () => {
+    this.setState({ isEditing: false })
+  }
+
   onKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
       this.onSave()
+    } else if (e.key === 'Escape') {
+      this.onCancelEdit()
     }
   }
 
@@ -73,13 +79,14 @@ export default class Task extends React.Component {
               value={editText}
               onChange={this.onTextChange}
               onKeyDown={this.onKeyPress}
+              onBlur={this.onCancelEdit}
               size={editText.length}
             />
             {errorMessage && <span className={`error-message ${showError ? 'show' : ''}`}>{errorMessage}</span>}
           </div>
         ) : (
           <label>
-            <span className="title" onClick={onToggleDone} onKeyDown={this.onKeyPress}>
+            <span className="title" onClick={onToggleDone}>
               {editText}
             </span>
             <span className="description">
