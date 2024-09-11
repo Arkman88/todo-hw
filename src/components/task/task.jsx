@@ -4,11 +4,21 @@ import { formatDistanceToNowStrict } from 'date-fns'
 import PropTypes from 'prop-types'
 
 export default class Task extends React.Component {
-  state = {
-    isEditing: false,
-    editText: this.props.description,
-    errorMessage: '',
-    showError: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      isEditing: false,
+      editText: this.props.description,
+      errorMessage: '',
+      showError: false,
+    }
+    this.inputRef = React.createRef()
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevState.isEditing && this.state.isEditing) {
+      this.inputRef.current.focus()
+    }
   }
 
   onEditClick = () => {
@@ -76,6 +86,7 @@ export default class Task extends React.Component {
             <input
               type="text"
               className="edit"
+              ref={this.inputRef}
               value={editText}
               onChange={this.onTextChange}
               onKeyDown={this.onKeyPress}
