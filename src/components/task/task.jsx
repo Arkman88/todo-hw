@@ -1,141 +1,119 @@
-import React from 'react'
-import './task.css'
+import { useState, useRef, useEffect } from 'react'
 import { formatDistanceToNowStrict } from 'date-fns'
-import PropTypes from 'prop-types'
+import './task.css'
 
-export default class Task extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      isEditing: false,
-      editText: this.props.description,
-      errorMessage: '',
-      showError: false,
+const Task = ({
+  id,
+  description,
+  created,
+  done,
+  time,
+  onEditItem,
+  onDeleted,
+  onToggleDone,
+  onStartTimer,
+  onPauseTimer,
+}) => {
+  const [isEditing, setIsEditing] = useState(false)
+  const [editText, setEditText] = useState(description)
+  const [errorMessage, setErrorMessage] = useState('')
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current.focus()
     }
-    this.inputRef = React.createRef()
+  }, [isEditing])
+
+  const onEditClick = () => {
+    setIsEditing(true)
+    setErrorMessage('')
+    setEditText(description)
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (!prevState.isEditing && this.state.isEditing) {
-      this.inputRef.current.focus()
-    }
+  const onTextChange = (e) => {
+    setEditText(e.target.value)
+    setErrorMessage('')
   }
 
-  onEditClick = () => {
-    this.setState({
-      isEditing: true,
-      errorMessage: '',
-      showError: false,
-      editText: this.props.description,
-    })
-  }
-
-  onTextChange = (e) => {
-    this.setState({ editText: e.target.value, errorMessage: '', showError: false })
-  }
-
-  onSave = () => {
-    const trimmedText = this.state.editText.trim()
+  const onSave = () => {
+    const trimmedText = editText.trim()
 
     if (trimmedText.length > 0) {
-      this.props.onEditItem(this.props.id, trimmedText)
-      this.setState({ isEditing: false, errorMessage: '', showError: false })
+      onEditItem(id, trimmedText)
+      setIsEditing(false)
+      setErrorMessage('')
     } else {
-      this.setState({ errorMessage: 'The task cannot be empty!', showError: true })
+      setErrorMessage('Задача не может быть пустой!')
     }
   }
 
-  onCancelEdit = () => {
-    this.setState({ isEditing: false })
+  const onCancelEdit = () => {
+    setIsEditing(false)
+    setEditText(description)
+    setErrorMessage('')
   }
 
-  onKeyPress = (e) => {
+  const onKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault()
-      this.onSave()
+      onSave()
     } else if (e.key === 'Escape') {
-      this.onCancelEdit()
+      onCancelEdit()
     }
   }
 
-  handleStart = () => {
-    this.props.onStartTimer(this.props.id)
+  const onStartClick = () => {
+    onStartTimer(id)
   }
 
-  handlePause = () => {
-    this.props.onPauseTimer(this.props.id)
+  const onPauseClick = () => {
+    onPauseTimer(id)
   }
 
-  render() {
-    const { created, onDeleted, onToggleDone, done, timer } = this.props
+  const timeAgo = formatDistanceToNowStrict(new Date(created), { addSuffix: true })
 
-    const { isEditing, editText, errorMessage, showError } = this.state
-    const timeAgo = formatDistanceToNowStrict(new Date(created), { addSuffix: true })
+  let classNames = done ? 'completed' : ''
+  classNames += isEditing ? ' editing' : ''
 
-    const timeRemaining = timer?.time || 0
-    const timeDisplay = `${Math.floor(timeRemaining / 60)}m ${timeRemaining % 60}s`
-
-    let classNames = done ? 'completed' : ''
-    classNames += isEditing ? ' editing' : ''
-
-    return (
-      <div className={classNames}>
-        <input className="toggle" checked={done} type="checkbox" onChange={onToggleDone} />
-        {isEditing ? (
-          <div>
-            <input
-              type="text"
-              className="edit"
-              ref={this.inputRef}
-              value={editText}
-              onChange={this.onTextChange}
-              onKeyDown={this.onKeyPress}
-              onBlur={this.onCancelEdit}
-              size={editText.length}
-            />
-            {errorMessage && <span className={`error-message ${showError ? 'show' : ''}`}>{errorMessage}</span>}
-          </div>
-        ) : (
-          <label>
-            <span className="title" onClick={onToggleDone}>
-              {editText}
-            </span>
-            <span className="description">
-              <button className="icon icon-play" onClick={this.handleStart} />
-              <button className="icon icon-pause" onClick={this.handlePause} />
-              <span className="timer-time">{timeDisplay}</span>
-            </span>
-            <span className="created">{timeAgo}</span>
-          </label>
-        )}
-        {!isEditing && (
-          <>
-            <button type="button" className="icon icon-edit" onClick={this.onEditClick} />
-            <button type="button" className="icon icon-destroy" onClick={onDeleted} />
-          </>
-        )}
-      </div>
-    )
-  }
+  return (
+    <div className={classNames}>
+      <input className="toggle" checked={done} type="checkbox" onChange={onToggleDone} />
+      {isEditing ? (
+        <div>
+          <input
+            type="text"
+            className="edit"
+            ref={inputRef}
+            value={editText}
+            onChange={onTextChange}
+            onKeyDown={onKeyPress}
+            onBlur={onCancelEdit}
+            size={editText.length}
+          />
+          {errorMessage && <span className="error-message">{errorMessage}</span>}
+        </div>
+      ) : (
+        <label>
+          <span className="title" onClick={onToggleDone}>
+            {description}
+          </span>
+          <span className="description">
+            <button className="icon icon-play" onClick={onStartClick} />
+            <button className="icon icon-pause" onClick={onPauseClick} />
+            <span className="time-display">{time > 0 ? `${Math.floor(time / 60)}м ${time % 60}с` : `${0}м ${0}с`}</span>
+          </span>
+          <span className="created">{timeAgo}</span>
+        </label>
+      )}
+      {!isEditing && (
+        <>
+          <button type="button" className="icon icon-edit" onClick={onEditClick} />
+          <button type="button" className="icon icon-destroy" onClick={onDeleted} />
+        </>
+      )}
+    </div>
+  )
 }
 
-Task.defaultProps = {
-  done: false,
-  description: '',
-  created: Date.now(),
-  timer: 0,
-  onEditItem: () => {},
-  onDeleted: () => {},
-  onToggleDone: () => {},
-}
-
-Task.propTypes = {
-  done: PropTypes.bool,
-  description: PropTypes.string,
-  created: PropTypes.string.isRequired,
-  time: PropTypes.number,
-  onEditItem: PropTypes.func,
-  onDeleted: PropTypes.func,
-  onToggleDone: PropTypes.func,
-  id: PropTypes.number.isRequired,
-}
+export default Task

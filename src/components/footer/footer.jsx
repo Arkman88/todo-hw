@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import TasksFilter from '../tasks-filter/tasks-filter'
 import './footer.css'
 
-function Footer({ all, left, filter, onFilterChange, clearCompleted }) {
+function Footer({ all = 0, left = 0, filter = 'all', onFilterChange = () => {}, clearCompleted = () => {} }) {
   return (
     <footer className="footer">
       <span className="todo-count">
@@ -15,14 +15,6 @@ function Footer({ all, left, filter, onFilterChange, clearCompleted }) {
       </button>
     </footer>
   )
-}
-
-Footer.defaultProps = {
-  all: 0,
-  left: 0,
-  filter: 'all',
-  onFilterChange: () => {},
-  clearCompleted: () => {},
 }
 
 Footer.propTypes = {

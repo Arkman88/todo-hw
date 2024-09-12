@@ -1,7 +1,7 @@
 import './tasks-filter.css'
 import PropTypes from 'prop-types'
 
-function TasksFilter({ filter, onFilterChange }) {
+const TasksFilter = ({ filter = 'all', onFilterChange = () => {} }) => {
   const filters = {
     all: 'All',
     active: 'Active',
@@ -19,11 +19,6 @@ function TasksFilter({ filter, onFilterChange }) {
       ))}
     </ul>
   )
-}
-
-TasksFilter.defaultProps = {
-  filter: 'all',
-  onFilterChange: () => {},
 }
 
 TasksFilter.propTypes = {

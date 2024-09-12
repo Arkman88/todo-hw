@@ -1,181 +1,143 @@
-import React from 'react'
+import { useState, useCallback } from 'react'
 import Header from '../header/header'
 import TaskList from '../task-list/task-list'
 import Footer from '../footer/footer'
 import './app.css'
 
-export default class App extends React.Component {
-  static createTodoItem(description, time) {
-    return {
-      description,
-      created: new Date().toISOString(),
-      id: Date.now(),
-      done: false,
-      time,
-      timer: { seconds: time, isRunning: false },
-    }
-  }
+const App = () => {
+  const [todoData, setTodoData] = useState([])
+  const [filter, setFilter] = useState('all')
+  const [intervals, setIntervals] = useState({})
 
-  filterTasks = {
+  const createTodoItem = (description, time) => ({
+    description,
+    created: new Date().toISOString(),
+    id: Date.now(),
+    done: false,
+    time: time || 0,
+  })
+
+  const filterTasks = {
     all: (tasks) => tasks,
     active: (tasks) => tasks.filter((task) => !task.done),
     completed: (tasks) => tasks.filter((task) => task.done),
   }
 
-  state = {
-    todoData: [],
-    filter: 'all',
-    timers: {},
-  }
+  const onToggleDone = useCallback(
+    (id) => {
+      setTodoData((todoData) => {
+        const idx = todoData.findIndex((el) => el.id === id)
+        const oldItem = todoData[idx]
+        const newItem = { ...oldItem, done: !oldItem.done }
 
-  componentDidMount() {
-    const savedState = localStorage.getItem('appState')
-    if (savedState) {
-      this.setState(JSON.parse(savedState))
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.todoData !== this.state.todoData || prevState.filter !== this.state.filter) {
-      localStorage.setItem('appState', JSON.stringify(this.state))
-    }
-  }
-
-  componentWillUnmount() {
-    Object.values(this.state.timers).forEach(({ timerId }) => {
-      if (timerId) clearInterval(timerId)
-    })
-  }
-
-  onToggleDone = (id) => {
-    this.setState(({ todoData, timers }) => {
-      const idx = todoData.findIndex((el) => el.id === id)
-      const oldItem = todoData[idx]
-      const newItem = { ...oldItem, done: !oldItem.done }
-
-      if (!oldItem.done) {
-        if (timers[id]?.timerId) clearInterval(timers[id].timerId)
-
-        const newTimers = { ...timers }
-        delete newTimers[id]
-        return {
-          todoData: [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)],
-          timers: newTimers,
+        if (newItem.done && intervals[id]) {
+          clearInterval(intervals[id])
+          setIntervals((prev) => {
+            // eslint-disable-next-line no-unused-vars
+            const { [id]: _, ...rest } = prev
+            return rest
+          })
         }
+
+        return [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)]
+      })
+    },
+    [intervals]
+  )
+
+  const onFilterChange = useCallback((filter) => {
+    setFilter(filter)
+  }, [])
+
+  const deleteItem = useCallback(
+    (id) => {
+      setTodoData((todoData) => todoData.filter((el) => el.id !== id))
+
+      // Очищаем таймер при удалении задачи
+      if (intervals[id]) {
+        clearInterval(intervals[id])
+        setIntervals((prev) => {
+          // eslint-disable-next-line no-unused-vars
+          const { [id]: _, ...rest } = prev
+          return rest
+        })
       }
-      return { todoData: [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)] }
-    })
-  }
+    },
+    [intervals]
+  )
 
-  onFilterChange = (filter) => {
-    this.setState({ filter })
-  }
+  const addItem = useCallback((text, time) => {
+    const newTask = createTodoItem(text, time)
+    setTodoData((todoData) => [...todoData, newTask])
+  }, [])
 
-  deleteItem = (id) => {
-    this.setState(({ todoData, timers }) => {
-      const newArr = todoData.filter((el) => el.id !== id)
+  const clearCompleted = useCallback(() => {
+    setTodoData((todoData) => todoData.filter((task) => !task.done))
+  }, [])
 
-      if (timers[id]?.timerId) clearInterval(timers[id].timerId)
+  const onEditItem = useCallback((id, newText) => {
+    setTodoData((todoData) => todoData.map((item) => (item.id === id ? { ...item, description: newText } : item)))
+  }, [])
 
-      return {
-        todoData: newArr,
-        timers: { ...timers, [id]: { ...timers[id], time: 0, timerId: null } },
-      }
-    })
-  }
+  const onStartTimer = useCallback(
+    (id) => {
+      if (intervals[id]) return // Если таймер уже запущен, не запускаем новый
 
-  addItem = (text, time) => {
-    const newTask = App.createTodoItem(text, time)
-    this.setState(({ todoData }) => ({
-      todoData: [...todoData, newTask],
-    }))
-  }
-
-  clearCompleted = () => {
-    this.setState(({ todoData }) => {
-      const newArr = todoData.filter((task) => !task.done)
-      return { todoData: newArr }
-    })
-  }
-
-  onEditItem = (id, newText) => {
-    this.setState(({ todoData }) => ({
-      todoData: todoData.map((item) => (item.id === id ? { ...item, description: newText } : item)),
-    }))
-  }
-
-  startTimer = (id) => {
-    this.setState((state) => {
-      const task = state.todoData.find((task) => task.id === id)
-      const taskTimer = state.timers[id] || { time: task.time }
-
-      if (taskTimer.isRunning || taskTimer.time <= 0) return null
-
-      const timerId = setInterval(() => {
-        this.setState(({ timers }) => {
-          const currentTimer = timers[id] || { time: taskTimer.time }
-
-          if (currentTimer.time > 0) {
-            return {
-              timers: { ...timers, [id]: { ...currentTimer, time: currentTimer.time - 1, isRunning: true } },
-            }
-          } else {
-            clearInterval(timerId)
-            return {
-              timers: { ...timers, [id]: { ...currentTimer, time: 0, isRunning: false, timerId: null } },
-            }
-          }
+      const intervalId = setInterval(() => {
+        setTodoData((todoData) => {
+          return todoData.map((task) => (task.id === id && task.time > 0 ? { ...task, time: task.time - 1 } : task))
         })
       }, 1000)
 
-      return {
-        timers: { ...state.timers, [id]: { ...taskTimer, timerId, isRunning: true } },
+      // Сохраняем идентификатор интервала для текущей задачи
+      setIntervals((prev) => ({
+        ...prev,
+        [id]: intervalId,
+      }))
+    },
+    [intervals, setTodoData]
+  )
+
+  const onPauseTimer = useCallback(
+    (id) => {
+      if (intervals[id]) {
+        clearInterval(intervals[id])
+        setIntervals((prev) => {
+          // eslint-disable-next-line no-unused-vars
+          const { [id]: _, ...rest } = prev
+          return rest
+        })
       }
-    })
-  }
+    },
+    [intervals]
+  )
 
-  pauseTimer = (id) => {
-    this.setState(({ timers }) => {
-      const taskTimer = timers[id]
-      if (taskTimer?.timerId) {
-        clearInterval(taskTimer.timerId)
-        return {
-          timers: { ...timers, [id]: { ...taskTimer, timerId: null, isRunning: false } },
-        }
-      }
-      return null
-    })
-  }
+  const doneCount = todoData.filter((el) => el.done).length
+  const todoCount = todoData.length - doneCount
+  const filteredTasks = filterTasks[filter](todoData)
 
-  render() {
-    const { todoData, filter, timers } = this.state
-    const doneCount = todoData.filter((el) => el.done).length
-    const todoCount = todoData.length - doneCount
-
-    const filteredTasks = this.filterTasks[filter](todoData)
-
-    return (
-      <>
-        <Header onAdd={this.addItem} />
-        <section className="main">
-          <TaskList
-            tasks={filteredTasks}
-            timers={timers}
-            onDeleted={this.deleteItem}
-            onToggleDone={this.onToggleDone}
-            onEditItem={this.onEditItem}
-            onStartTimer={this.startTimer}
-            onPauseTimer={this.pauseTimer}
-          />
-          <Footer
-            all={todoCount}
-            left={doneCount}
-            filter={filter}
-            onFilterChange={this.onFilterChange}
-            clearCompleted={this.clearCompleted}
-          />
-        </section>
-      </>
-    )
-  }
+  return (
+    <>
+      <Header onAdd={addItem} />
+      <section className="main">
+        <TaskList
+          tasks={filteredTasks}
+          onDeleted={deleteItem}
+          onToggleDone={onToggleDone}
+          onEditItem={onEditItem}
+          onStartTimer={onStartTimer}
+          onPauseTimer={onPauseTimer}
+        />
+        <Footer
+          all={todoCount}
+          left={doneCount}
+          filter={filter}
+          onFilterChange={onFilterChange}
+          clearCompleted={clearCompleted}
+        />
+      </section>
+    </>
+  )
 }
+
+export default App
