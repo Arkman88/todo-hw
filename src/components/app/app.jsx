@@ -53,7 +53,6 @@ const App = () => {
     (id) => {
       setTodoData((todoData) => todoData.filter((el) => el.id !== id))
 
-      // Очищаем таймер при удалении задачи
       if (intervals[id]) {
         clearInterval(intervals[id])
         setIntervals((prev) => {
@@ -81,7 +80,7 @@ const App = () => {
 
   const onStartTimer = useCallback(
     (id) => {
-      if (intervals[id]) return // Если таймер уже запущен, не запускаем новый
+      if (intervals[id]) return
 
       const intervalId = setInterval(() => {
         setTodoData((todoData) => {
@@ -89,7 +88,6 @@ const App = () => {
         })
       }, 1000)
 
-      // Сохраняем идентификатор интервала для текущей задачи
       setIntervals((prev) => ({
         ...prev,
         [id]: intervalId,
